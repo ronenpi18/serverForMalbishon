@@ -39,7 +39,7 @@ MongoClient.connect(url, function(err, db) {
         var dbo = db.db("police");
         var json = {"name":req.body.name,"places":[]}
         json.places = JSON.parse(req.body.details);
-        dbo.collection("bases1").insert(json);
+        dbo.collection("bases").insert(json);
         console.log("sdfsdfsdfsdf")
         res.send("ok")
     });
