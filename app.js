@@ -40,7 +40,7 @@ MongoClient.connect(url, function(err, db) {
         var json = {"name":req.body.name,"places":[]}
         json.places = JSON.parse(req.body.details);
         dbo.collection("bases").insert(json);
-        console.log("sdfsdfsdfsdf")
+        console.log("inserted to db successfully")
         res.send("ok")
     });
 
