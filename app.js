@@ -20,6 +20,8 @@ app.get('/',function(req,res){
     //__dirname : It will resolve to your project folder.
 });
 MongoClient.connect(url, function(err, db) {
+    var dbo = db.db("police");
+    // dbo.adminCommand({setParameter:1, ttlMonitorSleepSecs: 5}); // run TTL monitor in every 5 seconds
     app.get('/get_all_bases',function(req,res){
         if (err) throw err;
         var dbo = db.db("police");
@@ -40,10 +42,30 @@ MongoClient.connect(url, function(err, db) {
         var json = {"name":req.body.name,"places":[]}
         json.places = JSON.parse(req.body.details);
         dbo.collection("bases").insert(json);
-        console.log("inserted to db successfully")
+        console.log("inserted to db successfully");
         res.send("ok")
     });
+    app.post('/add_report', function(req, res){
+        var dbo = db.db("police");
+        var datetime = new Date();
+        var timenow = datetime.getTime();
+        var json = {
+            base_id:req.body.id,
+            now: timenow,
+            created_at: new Date(Date.now())
+        };
 
+        dbo.collection("reports").createIndex({created_at: 1}, {expireAfterSeconds: 30});
+        // dbo.collection("reports").createIndex({ "creationDate": 1 }, { expireAfterSeconds: 10 } )
+        // dbo.collection("reports").creationDate = 1
+        dbo.collection("reports").insert(json);
+
+
+        //datetime.getDate()+" "+datetime.getHours()+":"+datetime.getMinutes()+":"+datetime.getSeconds()+5
+        //{ "createdAt": 1 }, { expireAfterSeconds: 3600 }
+        console.log("inserted to db successfully");
+        res.send("ok")
+    })
     //__dirname : It will resolve to your project folder.
 });
 
